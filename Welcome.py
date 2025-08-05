@@ -166,7 +166,7 @@ if selected_page == "Home":
 
         st.markdown('<div class="centered-button-container">', unsafe_allow_html=True)
         if st.button("✨ Start Creating Now", key="bottom_button"):
-            st.switch_page("pages/blog_generator.py")
+            st.switch_page("pages/Blog_generator.py")
         st.markdown('</div>', unsafe_allow_html=True)
 
         st.markdown('</div>', unsafe_allow_html=True)
