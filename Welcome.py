@@ -173,10 +173,10 @@ if selected_page == "Home":
 
 # --- NAVIGATION LOGIC ---
 PAGES = {
-    "Blog Generator": "pages/blog_generator.py",
-    "Image Finder": "pages/image_generator.py",
+    "Blog Generator": "pages/Blog_generator.py",
+    "Image Finder": "pages/Image_generator.py",
     "Doc Q&A": "pages/pdf_summarizer.py",
-    "Translator": "pages/translator.py"
+    "Translator": "pages/Translator.py"
 }
 
 if selected_page in PAGES:
