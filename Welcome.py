@@ -2,32 +2,26 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 
 # --- PAGE CONFIGURATION ---
-# Using "auto" for the sidebar makes it expanded on desktop and collapsed on mobile.
 st.set_page_config(
     page_title="AI Blog Generator",
     page_icon="🔵",
     layout="wide",
-    initial_sidebar_state="auto"  # This is key for responsiveness
+    initial_sidebar_state="auto"
 )
 
 # --- FUNCTION TO INJECT CSS AND BACKGROUND ---
-# We no longer need responsive navbar CSS, just styles for the page and background.
 def inject_css_and_background():
     """
     Injects CSS for page styling and the animated orb background.
     """
-    # HTML for the animated background orbs
     balls_html = '<div class="ball-container">' + ''.join(['<div class="ball"></div>' for _ in range(12)]) + '</div>'
-
-    # The simplified CSS for the page
     css = """
     <style>
-        /* --- Hide Streamlit's default header, footer, and hamburger menu --- */
-        /* The sidebar will have its own menu functionality */
+        /* Hide Streamlit's default elements */
         header, footer { visibility: hidden !important; }
-        .st-emotion-cache-18ni7ap { display: none; } /* Hides default hamburger */
+        .st-emotion-cache-18ni7ap { display: none; }
 
-        /* --- General and Background Styles --- */
+        /* General and Background Styles */
         .stApp { background: #0f172a; color: #FFFFFF; }
         .ball-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; z-index: -1; }
         @keyframes animate-orb {
@@ -35,7 +29,7 @@ def inject_css_and_background():
             50% { transform: translateY(-50vh) translateX(-25px) scale(1); opacity: 0.5; }
             100% { transform: translateY(-120vh) translateX(0) scale(1.1); opacity: 0; }
         }
-        .ball { /* Orb styles remain the same */
+        .ball {
             position: absolute; display: block; list-style: none; width: 20px; height: 20px;
             background: radial-gradient(circle at 30% 30%, rgba(173, 216, 230, 0.9), rgba(109, 213, 237, 0.5) 90%);
             border-radius: 50%;
@@ -43,12 +37,10 @@ def inject_css_and_background():
             animation: animate-orb 25s infinite linear;
             bottom: -150px;
         }
-        /* Add other ball styles as needed */
         .ball:nth-child(1) { left: 25%; width: 80px; height: 80px; animation-delay: 0s; }
         .ball:nth-child(2) { left: 10%; width: 20px; height: 20px; animation-delay: 2s; animation-duration: 12s; }
-        /* ... etc. for all 10 balls ... */
 
-        /* --- Main Content Styling --- */
+        /* Main Content Styling */
         .custom-title {
             font-family: 'Times New Roman', Times, serif; font-size: 80px !important; font-weight: 900 !important;
             color: #FFFFFF; text-align: center; padding-top: 1rem; padding-bottom: 2rem;
@@ -64,10 +56,17 @@ def inject_css_and_background():
         .answer-text, .answer-text ul li { color: #FFFFFF; }
         .centered-button-container { text-align: center; margin-top: 2rem; }
 
-        /* --- Sidebar Styling --- */
+        /* Sidebar Styling */
         [data-testid="stSidebar"] {
-            background-color: #0f172a; /* Match the main background */
+            background-color: #0f172a;
             border: none;
+        }
+        
+        /* --- Responsive CSS for Mobile --- */
+        @media (max-width: 768px) {
+            .custom-title {
+                font-size: 34px !important; /* Even smaller title on mobile */
+            }
         }
     </style>
     """
@@ -77,10 +76,9 @@ def inject_css_and_background():
 inject_css_and_background()
 
 # --- NAVIGATION MENU (IN THE SIDEBAR) ---
-# By placing the menu in st.sidebar, Streamlit handles the responsiveness automatically.
 with st.sidebar:
     selected_page = option_menu(
-        menu_title="Navigation",  # Title for the sidebar menu
+        menu_title="Navigation",
         options=["Home", "Blog Generator", "Image Finder", "Doc Q&A", "Translator"],
         icons=["house-heart-fill", "pencil-square", "image-fill", "file-earmark-text-fill", "translate"],
         menu_icon="cast",
@@ -97,7 +95,7 @@ with st.sidebar:
         }
     )
 
-# --- PAGE CONTENT (Displayed based on selection) ---
+# --- PAGE CONTENT ---
 if selected_page == "Home":
     st.markdown('<p class="custom-title">AI Blog Generator Welcomes You!</p>', unsafe_allow_html=True)
 
@@ -131,14 +129,11 @@ if selected_page == "Home":
 
         st.markdown('<div class="centered-button-container">', unsafe_allow_html=True)
         if st.button("✨ Start Creating Now", key="bottom_button"):
-            # To navigate, we simply call st.switch_page
             st.switch_page("pages/Blog_generator.py")
         st.markdown('</div>', unsafe_allow_html=True)
-
         st.markdown('</div>', unsafe_allow_html=True)
 
 # --- NAVIGATION LOGIC ---
-# Define the mapping from page names to file paths
 PAGES = {
     "Blog Generator": "pages/Blog_generator.py",
     "Image Finder": "pages/Image_generator.py",
@@ -146,6 +141,5 @@ PAGES = {
     "Translator": "pages/Translator.py"
 }
 
-# If the selected page is one of the other pages (not "Home"), switch to it.
 if selected_page in PAGES:
     st.switch_page(PAGES[selected_page])
