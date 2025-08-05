@@ -1,4 +1,4 @@
-# requirements.txt (NEW - CORRECTED)
+# requirements.txt (FINAL CORRECTED VERSION)
 streamlit
 google-generativeai
 python-dotenv
@@ -6,3 +6,5 @@ pypdf
 requests
 Pillow
 streamlit-option-menu
+python-docx
+python-pptx
