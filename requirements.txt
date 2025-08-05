@@ -1,17 +1,8 @@
-# Core Framework
+# requirements.txt (NEW - CORRECTED)
 streamlit
-
-# Google Gemini API
 google-generativeai
-
-# For handling the .env file with your API key
 python-dotenv
-
-# For PDF processing in the "Doc Q&A" feature
 pypdf
-
-# For making HTTP requests, potentially for the Image Finder
 requests
-
-# For handling images, useful for both display and potential uploads
 Pillow
+streamlit-option-menu
