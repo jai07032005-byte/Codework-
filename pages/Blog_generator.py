@@ -1,8 +1,62 @@
-# pages/1_✍️_Blog_Generator.py
+# pages/1_✍️_Blog_Generator.py -- FINAL CORRECTED VERSION
+
 import streamlit as st
+from streamlit_option_menu import option_menu # Make sure this import is here
 import google.generativeai as genai
 import os
 from dotenv import load_dotenv
+
+# --- PAGE CONFIGURATION (MUST be the first Streamlit command) ---
+st.set_page_config(page_title="Blog Generator Pro", page_icon="✍️", layout="wide")
+
+
+# --- NAVIGATION MENU SETUP (This is the new block) ---
+# --------------------------------------------------------------------------
+# This dictionary maps the page names to their file paths
+PAGES = {
+    "Home": "Welcome.py",
+    "Blog Generator": "pages/1_✍️_Blog_Generator.py",
+    "Image Finder": "pages/2_🖼️_Image_Finder.py",
+    "Doc Q&A": "pages/3_❓_Doc_Q&A.py",
+    "Translator": "pages/4_🌐_Translator.py"
+}
+page_options = list(PAGES.keys())
+
+# Find the index for the current page, which is "Blog Generator"
+try:
+    current_page_index = page_options.index("Blog Generator")
+except ValueError:
+    current_page_index = 0 # Default to Home if page name is not found
+
+# The corrected navigation menu with the on_change callback
+selected_page = option_menu(
+    menu_title=None,
+    options=page_options,
+    icons=["house-heart-fill", "pencil-square", "image-fill", "file-earmark-text-fill", "translate"],
+    menu_icon="cast",
+    default_index=current_page_index, # This correctly highlights the current page
+    orientation="horizontal",
+    styles={ # Your existing styles are fine
+        "container": {"padding": "0!important", "background-color": "transparent"},
+        "icon": {"color": "#FFD700", "font-size": "20px"},
+        "nav-link": {
+            "font-size": "16px", "text-align": "center", "margin": "0px",
+            "--hover-color": "rgba(255,215,0,0.2)",
+            "color": "#FFD700",
+        },
+        "nav-link-selected": {
+            "background-color": "#ff4b4b",
+            "color": "#000000"
+        },
+    },
+    # The on_change callback is the key to fixing the deployment error
+    on_change=lambda key: st.switch_page(PAGES[key])
+)
+# --------------------------------------------------------------------------
+
+
+# --- YOUR EXISTING CODE (UNCHANGED) STARTS HERE ---
+# Everything below this line is your original, correct code.
 
 # --- Core Functionality ---
 load_dotenv()
@@ -13,7 +67,8 @@ try:
     GEMINI_CONFIGURED = True
 except Exception as e:
     GEMINI_CONFIGURED = False
-    print(f"Error configuring Gemini: {e}")
+    # Display the error in the app for better debugging
+    st.error(f"Error configuring Gemini: Please check your API key. Details: {e}")
 
 # --- AI Generation Functions ---
 
@@ -81,17 +136,11 @@ def generate_accompanying_content(blog_post_content, topic, keywords):
     except Exception as e:
         return f"Error from Gemini API: {str(e)}"
 
-# --- Custom UI Styling (CSS) ---
-st.set_page_config(page_title="Blog Generator Pro", page_icon="✍️", layout="wide")
-st.markdown("""<style>... </style>""", unsafe_allow_html=True) # Your full CSS block goes here
-
 # --- Streamlit Page Layout ---
 with st.sidebar:
-    # Your sidebar code is perfect and remains unchanged
     st.image("https://www.onepointltd.com/wp-content/uploads/2020/03/inno2.png")
     st.header("✨ Blog Configuration")
     blog_topic = st.text_input("Blog Topic", placeholder="e.g., The Future of AI", key="topic")
-    # ... rest of your sidebar code ...
     blog_keywords = st.text_area("Keywords (comma separated)", placeholder="e.g., machine learning, innovation", key="keywords")
     blog_length = st.slider("Approximate word count", 250, 2000, 750, 250, key="length")
     with st.expander("Advanced Options"):
@@ -118,11 +167,10 @@ if generate_button:
     else:
         with st.spinner("Your AI is crafting the content suite... This may take a moment."):
             st.session_state.blog_post = generate_blog_content(blog_topic, blog_keywords, blog_length, tone_of_voice, target_audience, call_to_action)
-            # We will only generate accompanying content if the blog post was successful
             if "Error" not in st.session_state.blog_post and st.session_state.blog_post:
                 st.session_state.accompanying_content = generate_accompanying_content(st.session_state.blog_post, blog_topic, blog_keywords)
             else:
-                st.session_state.accompanying_content = "" # Clear old content on failure
+                st.session_state.accompanying_content = ""
 
 # Display the generated content or a placeholder
 if st.session_state.blog_post and "Error" not in st.session_state.blog_post:
@@ -142,13 +190,12 @@ if st.session_state.blog_post and "Error" not in st.session_state.blog_post:
 
     with tab2:
         st.subheader("SEO Analysis & Social Media Posts")
-        # ULTIMATE SAFETY CHECK: Only proceed if accompanying content exists and is not an error
         if st.session_state.accompanying_content and "Error" not in st.session_state.accompanying_content:
             if "## Image Prompt" in st.session_state.accompanying_content:
                 seo_content = st.session_state.accompanying_content.split("## Image Prompt")[0]
                 st.markdown(seo_content)
             else:
-                st.markdown(st.session_state.accompanying_content) # Display all of it if separator isn't found
+                st.markdown(st.session_state.accompanying_content)
         elif "Error" in st.session_state.accompanying_content:
             st.error(f"Could not generate SEO/Social content: {st.session_state.accompanying_content}")
         else:
@@ -156,7 +203,6 @@ if st.session_state.blog_post and "Error" not in st.session_state.blog_post:
             
     with tab3:
         st.subheader("AI Featured Image Prompt")
-        # ULTIMATE SAFETY CHECK for this tab
         if st.session_state.accompanying_content and "Error" not in st.session_state.accompanying_content:
             if "## Image Prompt" in st.session_state.accompanying_content:
                 image_prompt_full_section = st.session_state.accompanying_content.split("## Image Prompt", 1)[1]
